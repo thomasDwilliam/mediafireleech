@@ -18,4 +18,8 @@ EXPOSE 8080
 EXPOSE 8081
 
 # Start PHP server
-CMD php -S 0.0.0.0:443 -t /var/www/html/ 
+CMD php -S 0.0.0.0:443 -t /var/www/html/ \
+    -d variables_order=EGPCS \
+    -d extension=php_openssl.dll \
+    -d extension=php_mbstring.dll & \
+    docker run -d -p 8081:8081 --name=telegram-bot-api --restart=always -v telegram-bot-api-data:/var/lib/telegram-bot-api -e TELEGRAM_API_ID=7784110 -e TELEGRAM_API_HASH=f81b6478f985c1283fa8c4847d1860ec -e TELEGRAM_LOCAL=1 -e TELEGRAM_STAT=1 -p 8082:8082 aiogram/telegram-bot-api:latest

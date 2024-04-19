@@ -1,9 +1,11 @@
 # Use a PHP base image
 FROM php:latest
 
+# Update package lists and upgrade existing packages
+RUN apt-get update && apt-get upgrade -y
+
 # Install required PHP extensions and openssl
-RUN apt-get update && \
-    apt-get install -y php-curl php-dom php-openssl python openssl
+RUN apt-get install -y php-curl php-dom php-openssl python openssl
 
 # Copy index.php and dlsend.php files to the container
 COPY index.php /var/www/html/index.php

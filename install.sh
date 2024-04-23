@@ -34,5 +34,5 @@ curl "http://172.17.0.2:8081/bot$botToken/setWebhook?url=https://factual-routine
 sleep 5
 
 # Start PHP server and ngrok
-php -S localhost:8080 --bind 0.0.0.0:8080 & \
+php -S localhost:8080 & \
 ngrok http --domain=factual-routinely-guppy.ngrok-free.app http://localhost:8080

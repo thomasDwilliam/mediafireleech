@@ -24,13 +24,8 @@ read -p "Enter telegram bot token: " bot_token
 export botToken="$bot_token"
 
 # Start Docker container for Telegram bot API
-docker run -d -p 8081:8081 --name=telegram-bot-api --restart=always \
-    -v telegram-bot-api-data:/var/lib/telegram-bot-api \
-    -e TELEGRAM_API_ID=7784110 \
-    -e TELEGRAM_API_HASH=f81b6478f985c1283fa8c4847d1860ec \
-    -e TELEGRAM_LOCAL=1 \
-    -e TELEGRAM_STAT=1 \
-    -p 8082:8082 aiogram/telegram-bot-api:latest
+docker run -d -p 8081:8081 --name=telegram-bot-api --restart=always -v telegram-bot-api-data:/var/lib/telegram-bot-api -e TELEGRAM_API_ID=7784110 -e TELEGRAM_API_HASH=f81b6478f985c1283fa8c4847d1860ec -e TELEGRAM_LOCAL=1 -e TELEGRAM_STAT=1 -p 8082:8082 aiogram/telegram-bot-api:latest
+
 
 # Set webhook for Telegram bot
 curl "http://172.17.0.2:8081/bot$botToken/setWebhook?url=https://factual-routinely-guppy.ngrok-free.app"

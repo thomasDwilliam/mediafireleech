@@ -9,7 +9,8 @@ $firstname = $update["message"]["from"]["first_name"];
 $username = $update["message"]["from"]["username"];
 $message = $update["message"]["text"];
 $message_id = $update["message"]["message_id"];
-echo "Server is running successfully!"
+$botToken = getenv('botToken');
+echo "Server is running successfully!";
 if (strpos($message, "/start") === 0) {
     sendMessage($chatId, "<b>Hello, @$username! Welcome to Mediafire Downloader Bot.</b>", $message_id);
 } elseif (strpos($message, "/dl") === 0) {
@@ -77,7 +78,8 @@ function formatBytes($bytes, $precision = 2) {
 }
 function sendMessage($chatId, $message, $message_id)
 {
-    $url = "https://in-ram-grown.ngrok-free.app/bot6794724389:AAFTxaLLVC1ROzCR8FRTpm2oXYDOr_MgjD4/sendMessage?chat_id="
+    global $botToken;
+    $url = "http://172.17.0.2:8081/bot$botToken/sendMessage?chat_id="
     . $chatId . "&text=" . urlencode($message) . "&parse_mode=HTML&reply_to_message_id=" . $message_id;
     file_get_contents($url);
 }

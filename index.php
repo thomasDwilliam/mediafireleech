@@ -36,7 +36,7 @@ Download Url - $link
     } else {
         sendMessage($chatId, "<b>Failed to start download.</b>", $message_id);
     }
-}elseif(strpos($message, "/server") === 0){
+} elseif (strpos($message, "/server") === 0) {
     $loadAvg = sys_getloadavg();
     $uptime = shell_exec('uptime');
     $cpuCores = trim(shell_exec('nproc'));
@@ -45,21 +45,21 @@ Download Url - $link
     $rootFreeSpace = disk_free_space($directory);
     $rootUsedSpace = $rootTotalSpace - $rootFreeSpace;
     $currentMemoryUsage = formatBytes(memory_get_usage());
-    $message = "<b>Server Information</b>
+    $serverMessage = "<b>Server Information</b>
 <pre>
 CPU Cores - $cpuCores
 Uptime - $uptime
 Total Space - " . formatBytes($rootTotalSpace) . "
 Used Space - " . formatBytes($rootUsedSpace) . "
 Free Space - " . formatBytes($rootFreeSpace) . "
-Memoery Usage - $currentMemoryUsage
+Memory Usage - $currentMemoryUsage
 </pre>";
-    sendMessage($chatId,$message,$message_id);
-}elseif(strpos($message, "/speed") === 0){
+    sendMessage($chatId, $serverMessage, $message_id);
+} elseif (strpos($message, "/speed") === 0) {
     $speedtestResult = shell_exec('curl -s https://raw.githubusercontent.com/sivel/speedtest-cli/master/speedtest.py | python -');
     $message = "    <b>Speed Test Result</b>
     <pre>$speedtestResult</pre>";
-    sendMessage($chatId,$message,$message_id);
+    sendMessage($chatId, $message, $message_id);
 } else {
     // Respond to other messages
     sendMessage($chatId, "Sorry, I don't understand that command.", $message_id);
@@ -76,6 +76,7 @@ function formatBytes($bytes, $precision = 2) {
 
     return round($bytes, $precision) . ' ' . $units[$pow];
 }
+
 function sendMessage($chatId, $message, $message_id)
 {
     global $botToken;

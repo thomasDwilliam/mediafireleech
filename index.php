@@ -9,6 +9,7 @@ $firstname = $update["message"]["from"]["first_name"];
 $username = $update["message"]["from"]["username"];
 $message = $update["message"]["text"];
 $message_id = $update["message"]["message_id"];
+echo "Server is running successfully!"
 if (strpos($message, "/start") === 0) {
     sendMessage($chatId, "<b>Hello, @$username! Welcome to Mediafire Downloader Bot.</b>", $message_id);
 } elseif (strpos($message, "/dl") === 0) {

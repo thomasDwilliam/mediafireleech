@@ -79,7 +79,7 @@ function formatBytes($bytes, $precision = 2) {
 function sendMessage($chatId, $message, $message_id)
 {
     global $botToken;
-    $url = "http://172.17.0.2:8081/bot$botToken/sendMessage?chat_id="
+    $url = "http://localhost:8081/bot$botToken/sendMessage?chat_id="
     . $chatId . "&text=" . urlencode($message) . "&parse_mode=HTML&reply_to_message_id=" . $message_id;
     file_get_contents($url);
 }

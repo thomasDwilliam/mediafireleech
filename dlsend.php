@@ -73,7 +73,7 @@ function getVideoDuration($videoPath) {
 
 function sendMessage($chatId, $message, $message_id) {
     global $botToken;
-    $url = "http://172.17.0.2:8081/bot$botToken/sendMessage?chat_id="
+    $url = "http://localhost:8081/bot$botToken/sendMessage?chat_id="
     . $chatId . "&text=" . urlencode($message) . "&parse_mode=HTML&reply_to_message_id=" . $message_id; // Reply to original message
     file_get_contents($url);
 }
@@ -86,7 +86,7 @@ function sendVideo($chatid, $message_id, $processId, $file_path, $img_path) {
     <pre>
 Process ID - $processId
     </pre>";
-    curl_setopt($ch, CURLOPT_URL, 'http://172.17.0.2:8081/bot' . $botToken . '/sendVideo');
+    curl_setopt($ch, CURLOPT_URL, 'http://localhost:8081/bot' . $botToken . '/sendVideo');
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_POST, true);
     curl_setopt($ch, CURLOPT_POSTFIELDS, [
@@ -130,7 +130,7 @@ function sendFile($chatid, $message_id, $processId, $file_path, $img_path) {
 Process ID - $processId
     </pre>";
     $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, 'http://172.17.0.2:8081/bot' . $botToken . '/sendDocument');
+    curl_setopt($ch, CURLOPT_URL, 'http://localhost:8081/bot' . $botToken . '/sendDocument');
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_POST, true);
     curl_setopt($ch, CURLOPT_POSTFIELDS, [

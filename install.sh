@@ -28,4 +28,4 @@ sleep 5
 curl "http://localhost:8081/bot$botToken/setWebhook?url=http://localhost:8080/"
 sleep 5
 # Start PHP server and ngrok
-php -S localhost:8080 & 
+php -S localhost:8080 

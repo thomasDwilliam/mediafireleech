@@ -9,15 +9,9 @@ cp dlsend.php /root/dlsend.php
 
 # Navigate to the appropriate directory
 cd ..
-
+pwd
 # Download and install ngrok
-wget https://bin.equinox.io/c/bNyj1mQVY4c/ngrok-v3-stable-linux-amd64.tgz && \
-tar -xvzf ngrok-v3-stable-linux-amd64.tgz -C /usr/local/bin && \
-rm -rf ngrok-v3-stable-linux-amd64.tgz
 
-# Set up ngrok authtoken
-read -p "Enter your ngrok token: " token
-ngrok config add-authtoken $token
 
 # Set up Telegram bot token
 read -p "Enter telegram bot token: " bot_token
@@ -31,9 +25,7 @@ docker run -d -p 8081:8081 --name=telegram-bot-api --restart=always -v telegram-
 
 # Sleep for a few seconds to allow Docker container to initialize
 sleep 5
-curl "http://172.17.0.2:8081/bot$botToken/setWebhook?url=https://factual-routinely-guppy.ngrok-free.app"
-
+curl "http://172.17.0.2:8081/bot$botToken/setWebhook?url=http://172.17.0.2:808/"
 sleep 5
 # Start PHP server and ngrok
-php -S localhost:8080 & \
-ngrok http --domain=factual-routinely-guppy.ngrok-free.app http://localhost:8080
+php -S localhost:8080 & 

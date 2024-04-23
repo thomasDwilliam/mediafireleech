@@ -32,7 +32,12 @@ docker run -d -p 8081:8081 --name=telegram-bot-api --restart=always \
     -e TELEGRAM_STAT=1 \
     -p 8082:8082 aiogram/telegram-bot-api:latest
 
+# Set webhook for Telegram bot
 curl "http://172.17.0.2:8081/bot$botToken/setWebhook?url=https://factual-routinely-guppy.ngrok-free.app"
+
+# Sleep for a few seconds to allow Docker container to initialize
+sleep 5
+
 # Start PHP server and ngrok
 php -S localhost:8080 --bind 0.0.0.0:8080 & \
-ngrok http --domain=factual-routinely-guppy.ngrok-free.app http://localhost:8080 
+ngrok http --domain=factual-routinely-guppy.ngrok-free.app http://localhost:8080

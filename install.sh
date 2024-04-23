@@ -25,7 +25,8 @@ docker run -d -p 8081:8081 --name=telegram-bot-api --restart=always -v telegram-
 
 # Sleep for a few seconds to allow Docker container to initialize
 sleep 5
-curl "http://localhost:8081/bot$botToken/setWebhook?url=http://localhost:8080/"
+curl "http://localhost:8081/bot$botToken/setWebhook?url=https://factual-routinely-guppy.ngrok-free.app/"
+echo "\n"
 sleep 5
 # Start PHP server and ngrok
-php -S localhost:8080 index.php
+php -S localhost:8080 ngrok http --domain=factual-routinely-guppy.ngrok-free.app http://localhost:8080 

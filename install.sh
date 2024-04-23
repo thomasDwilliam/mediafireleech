@@ -8,10 +8,10 @@ cp index.php /root/index.php
 cp dlsend.php /root/dlsend.php
 
 # Navigate to the appropriate directory
-cd ..
+cd /root/
 pwd
 # Download and install ngrok
-
+rm -rf mediafireleech
 
 # Set up Telegram bot token
 read -p "Enter telegram bot token: " bot_token
@@ -28,4 +28,4 @@ sleep 5
 curl "http://localhost:8081/bot$botToken/setWebhook?url=http://localhost:8080/"
 sleep 5
 # Start PHP server and ngrok
-php -S localhost:8080 
+php -S localhost:8080 index.php

@@ -12,14 +12,14 @@ install_ngrok() {
     rm -rf ngrok-v3-stable-linux-amd64.tgz
 }
 
-echo "${GREEN}Choose an option:${NC}"
-echo "${GREEN}1. Install Telegram server${NC}"
-echo "${GREEN}2. Install Telegram bot${NC}"
+echo -e "${GREEN}Choose an option:${NC}"
+echo -e "${GREEN}1. Install Telegram server${NC}"
+echo -e "${GREEN}2. Install Telegram bot${NC}"
 read -p "${GREEN}Enter your choice (1 or 2): ${NC}" option
 
 case $option in 
     1)
-        echo "${GREEN}Installing ngrok .... ${NC}"
+        echo -e "${GREEN}Installing ngrok .... ${NC}"
         install_ngrok
 
         # Set up Telegram bot token
@@ -45,16 +45,16 @@ case $option in
         read -p "${GREEN}Enter ngrok static domain: ${NC}" domain
         read -p "${GREEN}Enter Telegram bot Backend endpoint: ${NC}" endpoint
         # Set webhook for Telegram bot
-        echo -e "${GREEN}Setting webhook for Telegram bot...${NC}"
-        curl "https://$domain/bot$botToken/setWebhook?url=https://$endpoint/"
-
+        
         # Sleep to allow Docker container to initialize
         echo -e "${GREEN}Forwarding porting using ngrok ${NC}"
 
         echo -e "${GREEN}Telegram server started at https://$domain/ ${NC}"
         sleep 2
 
-        ngrok http --domain=$domain http://localhost:8081
+        ngrok http --domain=$domain http://localhost:8081 &
+        echo -e "${GREEN}Setting webhook for Telegram bot...${NC}"
+        curl "https://$domain/bot$botToken/setWebhook?url=https://$endpoint/"
         ;;
     2)
         apk add php php-curl php-dom php-openssl python3 ffmpeg

@@ -71,7 +71,7 @@ case $option in
         read -p "Enter Telegram bot Server Endpoint: " endpoint
         touch credential.json
         # Save bot token and endpoint to credential.json
-        echo "{\"token\":\"$botToken\",\"endpoint\":\"$endpoint\"}" > 'credential.json'
+        echo "{\"botToken\":\"$botToken\",\"endpoint\":\"$endpoint\"}" > 'credential.json'
         
         # Add endpoint in credential.json
         if [ -n "$domain" ]; then

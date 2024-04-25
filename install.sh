@@ -15,7 +15,7 @@ install_ngrok() {
 echo -e "${GREEN}Choose an option:${NC}"
 echo -e "${GREEN}1. Install Telegram server${NC}"
 echo -e "${GREEN}2. Install Telegram bot${NC}"
-read -p "${GREEN}Enter your choice (1 or 2): ${NC}" option
+read -p -e "${GREEN}Enter your choice (1 or 2): ${NC}" option
 
 case $option in 
     1)

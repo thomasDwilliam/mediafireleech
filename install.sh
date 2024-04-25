@@ -22,9 +22,6 @@ case $option in
         echo -e "${GREEN}Installing ngrok .... ${NC}"
         install_ngrok
 
-        # Set up Telegram bot token
-        read -p "Enter telegram bot token: " bot_token
-        export botToken="$bot_token"
 
         # Set up ngrok authtoken
         read -p "Enter ngrok token: " nToken
@@ -48,7 +45,7 @@ case $option in
             echo -e "${GREEN}Forwarding porting using ngrok ${NC}"
             echo -e "${GREEN}Telegram server started at https://$domain/ ${NC}"
             sleep 2
-            ngrok http --domain=$domain http://localhost:8081 &
+            ngrok http --domain=$domain http://localhost:8081
         else
             echo "Domain not provided. Exiting."
             exit 1
@@ -63,7 +60,6 @@ case $option in
         # Set up Telegram bot token
         read -p "Enter telegram bot token: " bot_token
         export botToken="$bot_token"
-
         # Set up ngrok authtoken
         read -p "Enter ngrok token: " nToken
         ngrok config add-authtoken $nToken
@@ -73,7 +69,10 @@ case $option in
 
         # Set up Telegram bot Server Endpoint
         read -p "Enter Telegram bot Server Endpoint: " endpoint
-
+        # Save bot token and endpoint to credential.json
+        echo "{\"token\":\"$botToken\",\"endpoint\":\"$endpoint\"}" > 'credential.json'
+        
+        # Add endpoint in credential.json
         if [ -n "$domain" ]; then
             echo -e "${GREEN}Setting Webhook${NC}"
             curl "https://$endpoint/bot$botToken/setWebhook?url=https://$domain/"
@@ -81,7 +80,7 @@ case $option in
             # Start PHP server and ngrok
             echo -e "${GREEN}Starting PHP server and Initializing Ngrok...${NC}"
             sleep 5
-            echo -e "${GREEN}Telegram bot server started at https://$domain/${NC}"
+            echo -e "${GREEN}Telegram bot started at https://$domain/${NC}"
             php -S localhost:8080 & \
             ngrok http --domain=$domain http://localhost:8080
         else

@@ -1,22 +1,27 @@
 <?php
 $update = file_get_contents('php://input');
-error_reporting(0);
 $update = json_decode($update, TRUE);
-$print = print_r($update, true); // Changed $print to store the printed output as a string
-$chatId = $update["message"]["chat"]["id"]; // Changed "curlat" to "chat"
+$print = print_r($update, true);
+$chatId = $update["message"]["chat"]["id"];
 $userId = $update["message"]["from"]["id"];
 $firstname = $update["message"]["from"]["first_name"];
 $username = $update["message"]["from"]["username"];
 $message = $update["message"]["text"];
 $message_id = $update["message"]["message_id"];
-$botToken = getenv('botToken');
+
+$credential = file_get_contents('credential.json');
+$credential = json_decode($credential, true);
+$botToken = $credential['botToken'];
+$endpoint = $credential['endpoint'];
+
 echo "Server is running successfully!";
+
 if (strpos($message, "/start") === 0) {
     sendMessage($chatId, "<b>Hello, @$username! Welcome to Mediafire Downloader Bot.</b>", $message_id);
 } elseif (strpos($message, "/dl") === 0) {
     $link = substr($message, 4);
     $file = 'data.json';
-    $id = rand(0,999999);
+    $id = rand(0, 999999);
     $data = [
         'chatid' => $chatId,
         'url' => $link,
@@ -37,7 +42,6 @@ Download Url - $link
         sendMessage($chatId, "<b>Failed to start download.</b>", $message_id);
     }
 } elseif (strpos($message, "/server") === 0) {
-    $loadAvg = sys_getloadavg();
     $uptime = shell_exec('uptime');
     $cpuCores = trim(shell_exec('nproc'));
     $directory = '/root/';
@@ -61,11 +65,11 @@ Memory Usage - $currentMemoryUsage
     <pre>$speedtestResult</pre>";
     sendMessage($chatId, $message, $message_id);
 } else {
-    // Respond to other messages
     sendMessage($chatId, "Sorry, I don't understand that command.", $message_id);
 }
 
-function formatBytes($bytes, $precision = 2) {
+function formatBytes($bytes, $precision = 2)
+{
     $units = array('B', 'KB', 'MB', 'GB', 'TB');
 
     $bytes = max($bytes, 0);
@@ -79,9 +83,9 @@ function formatBytes($bytes, $precision = 2) {
 
 function sendMessage($chatId, $message, $message_id)
 {
-    global $botToken;
-    $url = "http://localhost:8081/bot$botToken/sendMessage?chat_id="
-    . $chatId . "&text=" . urlencode($message) . "&parse_mode=HTML&reply_to_message_id=" . $message_id;
+    global $botToken, $endpoint;
+    $url = "https://$endpoint/bot$botToken/sendMessage?chat_id="
+        . $chatId . "&text=" . urlencode($message) . "&parse_mode=HTML&reply_to_message_id=" . $message_id;
     file_get_contents($url);
 }
 ?>

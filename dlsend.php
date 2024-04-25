@@ -5,10 +5,13 @@ $mediafireUrl = $data['url'];
 $chatid = $data['chatid'];
 $message_id = $data['message_id'];
 $processId = $data['processId'];
-$botToken = getenv('botToken');
+$credential = file_get_contents('credential.json');
+$credential = json_decode($credential, true);
+$botToken = $credential['botToken'];
+$endpoint = $credential['endpoint'];
 shell_exec('rm -rf data.json');
 $downloadLink = extractLink($mediafireUrl, $chatid, $message_id);
-dlsend($downloadLink, $chatid, $message_id, $processId);
+$status = dlsend($downloadLink, $chatid, $message_id, $processId);
 
 if ($status === false) {
     exit(sendMessage($chatid, "<b>Fail to Download</b>", $message_id));
@@ -16,7 +19,8 @@ if ($status === false) {
     exit(); // Exit after successful download
 }
 
-function extractLink($mediafireUrl, $chatid, $message_id) {
+function extractLink($mediafireUrl, $chatid, $message_id)
+{
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $mediafireUrl);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
@@ -42,15 +46,16 @@ function extractLink($mediafireUrl, $chatid, $message_id) {
     }
 }
 
-function dlsend($dlurl, $chatid, $message_id, $processId) {
+function dlsend($dlurl, $chatid, $message_id, $processId)
+{
     $name = $processId; // Name the video file
     $fileExtension = substr(strrchr($dlurl, '.'), 1);
     $file = $name . "." . $fileExtension;
     $img = "image.jpeg";
     $output = shell_exec('wget -q ' . $dlurl . ' -O ' . $file);
     $image = shell_exec("wget -q 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQBMcEZv5mxvSTCgqbAWlE5hyqz5O_FAUy2zVSiqxZ01EUUuGjcqJNP_QgNuMVsomfyfco&usqp=CAU' -O image.jpeg ");
-    $file_path = "/root/{$file}";
-    $img_path = "/root/{$img}";
+    $file_path = "/root/mediafireleech/{$file}";
+    $img_path = "/root/mediafireleech/{$img}";
     $fileSizeInMB = getFileSizeInMB($file_path);
     if ($fileSizeInMB <= 2000) {
         if ($fileExtension === 'mp4') {
@@ -63,7 +68,8 @@ function dlsend($dlurl, $chatid, $message_id, $processId) {
     }
 }
 
-function getVideoDuration($videoPath) {
+function getVideoDuration($videoPath)
+{
     $cmd = "ffmpeg -i $videoPath 2>&1 | grep Duration | cut -d ' ' -f 4 | sed s/,//";
     $output = shell_exec($cmd);
     sscanf($output, "%d:%d:%f", $hours, $minutes, $seconds);
@@ -71,22 +77,24 @@ function getVideoDuration($videoPath) {
     return $duration;
 }
 
-function sendMessage($chatId, $message, $message_id) {
-    global $botToken;
-    $url = "http://localhost:8081/bot$botToken/sendMessage?chat_id="
-    . $chatId . "&text=" . urlencode($message) . "&parse_mode=HTML&reply_to_message_id=" . $message_id; // Reply to original message
+function sendMessage($chatId, $message, $message_id)
+{
+    global $botToken, $endpoint;
+    $url = "https://$endpoint/bot$botToken/sendMessage?chat_id="
+        . $chatId . "&text=" . urlencode($message) . "&parse_mode=HTML&reply_to_message_id=" . $message_id; // Reply to original message
     file_get_contents($url);
 }
 
-function sendVideo($chatid, $message_id, $processId, $file_path, $img_path) {
-    global $botToken;
+function sendVideo($chatid, $message_id, $processId, $file_path, $img_path)
+{
+    global $botToken, $endpoint;
     $duration = getVideoDuration($file_path);
     $ch = curl_init();
     $caption = "<b>Download Complete</b>
     <pre>
 Process ID - $processId
     </pre>";
-    curl_setopt($ch, CURLOPT_URL, 'http://localhost:8081/bot' . $botToken . '/sendVideo');
+    curl_setopt($ch, CURLOPT_URL, "https://$endpoint/bot$botToken/sendVideo");
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_POST, true);
     curl_setopt($ch, CURLOPT_POSTFIELDS, [
@@ -113,24 +121,25 @@ Process ID - $processId
             return true; // Message was sent successfully
         } else {
             // Log the response for debugging
-            error_log("Telegram API response: " . $response, 3, "/root/error.log");
+            error_log("Telegram API response: " . $response, 3, "/root/mediafireleech/error.log");
             return false; // Message sending failed
         }
     } else {
         // Log the empty response for debugging
-        error_log("Empty response from Telegram API", 3, "/root/error.log");
+        error_log("Empty response from Telegram API", 3, "/root/mediafireleech/error.log");
         return false; // Empty response
     }
 }
 
-function sendFile($chatid, $message_id, $processId, $file_path, $img_path) {
-    global $botToken;
+function sendFile($chatid, $message_id, $processId, $file_path, $img_path)
+{
+    global $botToken, $endpoint;
     $caption = "<b>Download Complete</b>
     <pre>
 Process ID - $processId
     </pre>";
     $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, 'http://localhost:8081/bot' . $botToken . '/sendDocument');
+    curl_setopt($ch, CURLOPT_URL, "https://$endpoint/bot$botToken/sendDocument");
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_POST, true);
     curl_setopt($ch, CURLOPT_POSTFIELDS, [
@@ -155,17 +164,18 @@ Process ID - $processId
             return true; // Message was sent successfully
         } else {
             // Log the response for debugging
-            error_log("Telegram API response: " . $response, 3, "/root/error.log");
+            error_log("Telegram API response: " . $response, 3, "/root/mediafireleech/error.log");
             return false; // Message sending failed
         }
     } else {
         // Log the empty response for debugging
-        error_log("Empty response from Telegram API", 3, "/root/error.log");
+        error_log("Empty response from Telegram API", 3, "/root/mediafireleech/error.log");
         return false; // Empty response
     }
 }
 
-function getFileSizeInMB($filePath) {
+function getFileSizeInMB($filePath)
+{
     $fileSizeInBytes = filesize($filePath);
     $fileSizeInMB = $fileSizeInBytes / (1024 * 1024);
     $fileSizeInMB = round($fileSizeInMB, 2);

@@ -43,18 +43,16 @@ case $option in
         echo -e "${GREEN}Telegram server initialized...${NC}"
         # Set ngrok static domain
         read -p "Enter ngrok static domain: " domain
-        read -p "Enter Telegram bot Backend endpoint: " endpoint
-        # Set webhook for Telegram bot
-        
-        # Sleep to allow Docker container to initialize
-        echo -e "${GREEN}Forwarding porting using ngrok ${NC}"
 
-        echo -e "${GREEN}Telegram server started at https://$domain/ ${NC}"
-        sleep 2
-
-        ngrok http --domain=$domain http://localhost:8081 &
-        echo -e "${GREEN}Setting webhook for Telegram bot...${NC}"
-        curl "https://$domain/bot$botToken/setWebhook?url=https://$endpoint/"
+        if [ -n "$domain" ]; then
+            echo -e "${GREEN}Forwarding porting using ngrok ${NC}"
+            echo -e "${GREEN}Telegram server started at https://$domain/ ${NC}"
+            sleep 2
+            ngrok http --domain=$domain http://localhost:8081 &
+        else
+            echo "Domain not provided. Exiting."
+            exit 1
+        fi
         ;;
     2)
         apk add php php-curl php-dom php-openssl python3 ffmpeg
@@ -70,13 +68,26 @@ case $option in
         read -p "Enter ngrok token: " nToken
         ngrok config add-authtoken $nToken
 
+        # Set up ngrok static domain
         read -p "Enter ngrok static domain: " domain
-        # Start PHP server and ngrok
-        echo -e "${GREEN}Starting PHP server and Initializing Ngrok...${NC}"
-        sleep 5
-        echo -e "${GREEN}Telegram bot server started at https://$domain/${NC}"
-        php -S localhost:8080 & \
-        ngrok http --domain=$domain http://localhost:8080
+
+        # Set up Telegram bot Server Endpoint
+        read -p "Enter Telegram bot Server Endpoint: " endpoint
+
+        if [ -n "$domain" ]; then
+            echo -e "${GREEN}Setting Webhook${NC}"
+            curl "https://$endpoint/bot$botToken/setWebhook?url=https://$domain/"
+            sleep 5
+            # Start PHP server and ngrok
+            echo -e "${GREEN}Starting PHP server and Initializing Ngrok...${NC}"
+            sleep 5
+            echo -e "${GREEN}Telegram bot server started at https://$domain/${NC}"
+            php -S localhost:8080 & \
+            ngrok http --domain=$domain http://localhost:8080
+        else
+            echo "Domain not provided. Exiting."
+            exit 1
+        fi
         ;;
     *)
         echo "Invalid option. Please choose either 1 or 2."

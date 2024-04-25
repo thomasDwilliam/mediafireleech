@@ -36,7 +36,7 @@ case $option in
             -e TELEGRAM_LOCAL=1 \
             -e TELEGRAM_STAT=1 \
             aiogram/telegram-bot-api:latest
-        sleep 5
+        sleep 6
         echo -e "${GREEN}Telegram server initialized...${NC}"
         # Set ngrok static domain
         read -p "Enter ngrok static domain: " domain
@@ -69,6 +69,7 @@ case $option in
 
         # Set up Telegram bot Server Endpoint
         read -p "Enter Telegram bot Server Endpoint: " endpoint
+        touch credential.json
         # Save bot token and endpoint to credential.json
         echo "{\"token\":\"$botToken\",\"endpoint\":\"$endpoint\"}" > 'credential.json'
         

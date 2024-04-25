@@ -15,7 +15,7 @@ install_ngrok() {
 echo -e "${GREEN}Choose an option:${NC}"
 echo -e "${GREEN}1. Install Telegram server${NC}"
 echo -e "${GREEN}2. Install Telegram bot${NC}"
-read -p -e "${GREEN}Enter your choice (1 or 2): ${NC}" option
+read -p "Enter your choice (1 or 2): " option
 
 case $option in 
     1)
@@ -42,8 +42,8 @@ case $option in
         sleep 5
         echo -e "${GREEN}Telegram server initialized...${NC}"
         # Set ngrok static domain
-        read -p "${GREEN}Enter ngrok static domain: ${NC}" domain
-        read -p "${GREEN}Enter Telegram bot Backend endpoint: ${NC}" endpoint
+        read -p "Enter ngrok static domain: " domain
+        read -p "Enter Telegram bot Backend endpoint: " endpoint
         # Set webhook for Telegram bot
         
         # Sleep to allow Docker container to initialize
@@ -70,7 +70,7 @@ case $option in
         read -p "Enter ngrok token: " nToken
         ngrok config add-authtoken $nToken
 
-        read -p "${GREEN}Enter ngrok static domain: ${NC}" domain
+        read -p "Enter ngrok static domain: " domain
         # Start PHP server and ngrok
         echo -e "${GREEN}Starting PHP server and Initializing Ngrok...${NC}"
         sleep 5
